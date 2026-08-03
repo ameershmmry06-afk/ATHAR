@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مساحة تترك اثر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0F2027;
+    --bg-card:#1B363E;
+    --bg-card-soft:#22434C;
+    --text-main:#F1EAD9;
+    --text-muted:#9FB4B1;
+    --gold:#C9A24E;
+    --rose:#A8524A;
+    --font-display:'Amiri', serif;
+    --font-body:'IBM Plex Sans Arabic', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--text-main);
+    font-family:var(--font-body);
+    line-height:1.9;
+    overflow-x:hidden;
+  }
+  .site-nav{
+    position:fixed;
+    top:0; inset-inline:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:linear-gradient(to bottom, rgba(15,32,39,0.9), transparent);
+  }
+  .site-nav .brand{
+    font-family:var(--font-display);
+    font-size:1.1rem;
+    color:var(--text-main);
+    text-decoration:none;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    padding:0;
+  }
+  .site-nav .brand:hover{color:var(--gold);}
+  .site-nav .nav-link{
+    display:inline-block;
+    background:transparent;
+    color:var(--text-muted);
+    text-decoration:none;
+    font-family:var(--font-body);
+    font-size:0.9rem;
+    border:1px solid rgba(241,234,217,0.2);
+    padding:8px 18px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .site-nav .nav-link:hover{color:var(--gold); border-color:var(--gold);}
+  .site-nav .brand:focus-visible,
+  .site-nav .nav-link:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+  a{color:inherit;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:80px 24px;
+    overflow:hidden;
+  }
+  .ripple-field{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    z-index:0;
+  }
+  .ripple{
+    position:absolute;
+    border-radius:50%;
+    border:1px solid rgba(201,162,78,0.35);
+    animation:ripple-grow 7s ease-out infinite;
+  }
+  .ripple.r2{animation-delay:2.3s;}
+  .ripple.r3{animation-delay:4.6s;}
+  @keyframes ripple-grow{
+    0%{width:40px; height:40px; opacity:0.9; border-color:rgba(201,162,78,0.55);}
+    100%{width:640px; height:640px; opacity:0; border-color:rgba(201,162,78,0);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ripple{animation:none; display:none;}
+  }
+  .hero-content{position:relative; z-index:1;}
+  .eyebrow{
+    font-size:0.85rem;
+    letter-spacing:0.15em;
+    color:var(--gold);
+    margin-bottom:18px;
+    display:inline-block;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    font-weight:700;
+    line-height:1.35;
+    margin-bottom:22px;
+  }
+  .hero p.tagline{
+    font-size:clamp(1rem, 2vw, 1.3rem);
+    color:var(--text-muted);
+    max-width:640px;
+    margin:0 auto 40px;
+  }
+  .btn{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--bg-deep);
+    font-weight:600;
+    font-size:1.05rem;
+    padding:16px 40px;
+    border-radius:100px;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    font-family:var(--font-body);
+  }
+  .btn:hover{transform:translateY(-3px); box-shadow:0 12px 30px rgba(201,162,78,0.25);}
+  .btn:focus-visible{outline:3px solid var(--text-main); outline-offset:3px;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--text-main);
+    border:1px solid rgba(241,234,217,0.3);
+  }
+  .btn.secondary:hover{box-shadow:none; border-color:var(--gold); color:var(--gold);}
+
+  .scroll-cue{
+    position:absolute;
+    bottom:36px;
+    font-size:0.85rem;
+    color:var(--text-muted);
+    z-index:1;
+  }
+
+  /* ---------- WAVE DIVIDER ---------- */
+  .wave-divider{display:block; width:100%; height:60px;}
+
+  /* ---------- SECTIONS ---------- */
+  section.info{
+    padding:90px 0;
+  }
+  .info-block{
+    display:grid;
+    grid-template-columns:80px 1fr;
+    gap:28px;
+    margin-bottom:70px;
+    opacity:1;
+    transform:none;
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  .info-block.pre-reveal{opacity:0; transform:translateY(24px);}
+  .info-block.visible{opacity:1; transform:translateY(0);}
+  .info-block:last-child{margin-bottom:0;}
+  .mark{
+    width:64px; height:64px;
+    border-radius:50%;
+    border:1px solid rgba(201,162,78,0.5);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold);
+    font-family:var(--font-display);
+    font-size:1.4rem;
+    flex-shrink:0;
+  }
+  .info-block h2{
+    font-family:var(--font-display);
+    font-size:1.6rem;
+    margin-bottom:12px;
+    color:var(--text-main);
+  }
+  .info-block p{color:var(--text-muted); font-size:1.02rem;}
+
+  .disclaimer{
+    background:var(--bg-card);
+    border-radius:16px;
+    padding:28px 32px;
+    margin-top:20px;
+    border-inline-start:3px solid var(--rose);
+  }
+  .disclaimer p{color:var(--text-muted); font-size:0.95rem;}
+  .disclaimer strong{color:var(--text-main);}
+
+  /* ---------- SUBMIT ---------- */
+  section.submit{
+    padding:90px 0 110px;
+    background:var(--bg-card);
+    border-radius:28px;
+    margin:0 auto 90px;
+    max-width:920px;
+  }
+  section.submit .inner{padding:0 40px;}
+  .submit h2{
+    font-family:var(--font-display);
+    font-size:2rem;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .submit .sub{
+    text-align:center;
+    color:var(--text-muted);
+    max-width:520px;
+    margin:0 auto 44px;
+  }
+  label{
+    display:block;
+    font-size:0.95rem;
+    color:var(--gold);
+    margin-bottom:8px;
+    font-weight:600;
+  }
+  textarea{
+    width:100%;
+    background:var(--bg-deep);
+    border:1px solid rgba(241,234,217,0.15);
+    border-radius:14px;
+    color:var(--text-main);
+    font-family:var(--font-body);
+    font-size:1rem;
+    padding:16px 18px;
+    resize:vertical;
+    min-height:120px;
+    margin-bottom:28px;
+  }
+  textarea:focus{outline:none; border-color:var(--gold);}
+  textarea:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  select{
+    width:100%;
+    background:var(--bg-deep);
+    border:1px solid rgba(241,234,217,0.15);
+    border-radius:14px;
+    color:var(--text-main);
+    font-family:var(--font-body);
+    font-size:1rem;
+    padding:16px 18px;
+    margin-bottom:28px;
+    cursor:pointer;
+  }
+  select:focus{outline:none; border-color:var(--gold);}
+  select:focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .type-badge{
+    display:inline-block;
+    background:var(--bg-card-soft);
+    color:var(--gold);
+    font-size:0.78rem;
+    padding:5px 14px;
+    border-radius:100px;
+    margin-bottom:14px;
+  }
+  .field-note{color:var(--text-muted); font-size:0.82rem; margin-top:-20px; margin-bottom:26px;}
+  .gform-wrap{
+    background:var(--bg-deep);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .gform-wrap iframe{display:block; border:none;}
+  .submit-row{text-align:center; margin-top:8px;}
+  .form-msg{
+    text-align:center;
+    margin-top:20px;
+    font-size:0.95rem;
+    min-height:1.4em;
+  }
+  .form-msg.ok{color:var(--gold);}
+  .form-msg.err{color:var(--rose);}
+
+  /* ---------- STORIES FEED ---------- */
+  section.feed{padding:0 0 110px;}
+  .feed h2{
+    font-family:var(--font-display);
+    font-size:2rem;
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .feed .sub{text-align:center; color:var(--text-muted); margin-bottom:50px;}
+  .story-card{
+    background:var(--bg-card);
+    border-radius:18px;
+    padding:30px 32px;
+    margin-bottom:22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .story-card::before{
+    content:"";
+    position:absolute;
+    top:-40px; left:-40px;
+    width:120px; height:120px;
+    border-radius:50%;
+    border:1px solid rgba(201,162,78,0.15);
+  }
+  .story-label{
+    font-size:0.78rem;
+    color:var(--gold);
+    letter-spacing:0.08em;
+    margin-bottom:10px;
+    display:block;
+  }
+  .story-text{color:var(--text-main); margin-bottom:18px; white-space:pre-wrap;}
+  .lesson-box{
+    background:var(--bg-card-soft);
+    border-radius:12px;
+    padding:16px 20px;
+    border-inline-start:3px solid var(--gold);
+  }
+  .lesson-box .story-label{margin-bottom:6px;}
+  .lesson-box p{color:var(--text-muted); white-space:pre-wrap;}
+  .empty-state{
+    text-align:center;
+    color:var(--text-muted);
+    padding:40px 20px;
+    font-size:0.95rem;
+  }
+  .empty-state a{color:var(--gold); text-decoration:underline;}
+
+  header.page-head{
+    padding:70px 24px 40px;
+    text-align:center;
+    position:relative;
+  }
+  .back-link{
+    display:inline-block;
+    background:transparent;
+    color:var(--text-muted);
+    border:1px solid rgba(241,234,217,0.2);
+    padding:8px 18px;
+    border-radius:100px;
+    font-family:var(--font-body);
+    font-size:0.85rem;
+    cursor:pointer;
+    margin-bottom:24px;
+  }
+  .back-link:hover{color:var(--gold); border-color:var(--gold);}
+  .back-link:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  header.page-head h1{
+    font-family:var(--font-display);
+    font-size:clamp(2rem, 5vw, 2.8rem);
+    margin-bottom:14px;
+  }
+  header.page-head p{
+    color:var(--text-muted);
+    max-width:520px;
+    margin:0 auto;
+  }
+  .filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    padding:0 24px 50px;
+  }
+  .filter-btn{
+    background:var(--bg-card);
+    color:var(--text-muted);
+    border:1px solid rgba(241,234,217,0.12);
+    padding:9px 22px;
+    border-radius:100px;
+    font-family:var(--font-body);
+    font-size:0.9rem;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .filter-btn:hover{border-color:var(--gold); color:var(--gold);}
+  .filter-btn.active{
+    background:var(--gold);
+    color:var(--bg-deep);
+    border-color:var(--gold);
+    font-weight:600;
+  }
+  .filter-btn:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+
+  /* ---------- FOOTER / ADMIN ---------- */
+  footer{
+    padding:50px 24px 70px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.85rem;
+  }
+  .admin-link{
+    background:none; border:none;
+    color:var(--text-muted);
+    text-decoration:underline;
+    cursor:pointer;
+    font-size:0.85rem;
+    font-family:var(--font-body);
+    margin-top:14px;
+  }
+  .admin-link:hover{color:var(--gold);}
+
+  .modal-backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(15,32,39,0.85);
+    z-index:50;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--bg-card);
+    border-radius:20px;
+    padding:36px;
+    max-width:560px;
+    width:100%;
+    max-height:80vh;
+    overflow-y:auto;
+  }
+  .modal h3{font-family:var(--font-display); font-size:1.4rem; margin-bottom:20px;}
+  .modal input[type="password"], .modal input[type="email"]{
+    width:100%;
+    background:var(--bg-deep);
+    border:1px solid rgba(241,234,217,0.15);
+    border-radius:10px;
+    color:var(--text-main);
+    padding:12px 16px;
+    font-family:var(--font-body);
+    margin-bottom:18px;
+  }
+  .modal-close{
+    position:absolute;
+    top:18px; left:18px;
+    background:none; border:none;
+    color:var(--text-muted);
+    font-size:1.4rem;
+    cursor:pointer;
+  }
+  .modal-wrap{position:relative;}
+  .pending-item{
+    background:var(--bg-card-soft);
+    border-radius:12px;
+    padding:18px 20px;
+    margin-bottom:14px;
+  }
+  .pending-item .story-text{font-size:0.95rem;}
+  .pending-actions{display:flex; gap:10px; margin-top:14px;}
+  .pending-actions button{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.9rem;
+  }
+  .btn-approve{background:var(--gold); color:var(--bg-deep);}
+  .btn-reject{background:transparent; color:var(--rose); border:1px solid var(--rose) !important;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+
+<div id="global-error-banner" style="display:none; position:fixed; top:0; inset-inline:0; z-index:100; background:#A8524A; color:#fff; padding:14px 20px; font-family:'IBM Plex Sans Arabic',sans-serif; font-size:0.9rem; text-align:center; direction:rtl;"></div>
+
+<nav class="site-nav">
+  <button type="button" class="brand" id="nav-home">مساحة تترك اثر</button>
+  <button type="button" class="nav-link" id="nav-stories">تجارب الناس</button>
+</nav>
+
+<div id="page-home">
+
+<section class="hero">
+  <div class="ripple-field" aria-hidden="true">
+    <div class="ripple r1"></div>
+    <div class="ripple r2"></div>
+    <div class="ripple r3"></div>
+  </div>
+  <div class="hero-content">
+    <span class="eyebrow">مساحة عراقية آمنة · مجهولة الهوية</span>
+    <h1>مساحة تترك اثر</h1>
+    <p class="tagline">تكدر تكتب فيها تجربتك المؤلمة والجميلة، والدرس الي تعلمته، بدون اسم وبدون حساب. بس صوتك ودرسك يوصل لناس تحتاجه.</p>
+    <a href="#submit" class="btn">شارك تجربتك الآن</a>
+  </div>
+  <div class="scroll-cue">مرر للأسفل ↓</div>
+</section>
+
+<svg class="wave-divider" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,30 C300,60 900,0 1200,30 L1200,60 L0,60 Z" fill="#1B363E"></path>
+</svg>
+
+<section class="info" style="background:var(--bg-card);">
+  <div class="wrap">
+
+    <div class="info-block">
+      <div class="mark">؟</div>
+      <div>
+        <h2>شنو هذا المكان</h2>
+        <p>كل واحد فينا يملك تجربة، ومو دائماً نكدر نحجيها. بالعراق أحياناً أصعب شيء هو تلكى مكان تتكلم فيه براحتك عن الشيء الي مريت بيه؛ خسارة، خطأ، صدمة، أو حتى لحظة جميلة غيرت نظرتك للحياة. مساحة تترك اثر هي مساحتك الآمنة.</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="mark">✓</div>
+      <div>
+        <h2>مجهول الهوية بالكامل</h2>
+        <p>ما نطلب اسم، ولا إيميل، ولا أي شيء يدل عليك. بس التجربة والدرس.</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="mark">↷</div>
+      <div>
+        <h2>تجربتك تصير درس لغيرك</h2>
+        <p>هدف مساحتنا هو عرض التجربة على الآخرين حتى يستفيدون منها، ويتجنبون نفس الألم.</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="mark">⟡</div>
+      <div>
+        <h2>ما يهم هويتك</h2>
+        <p>عمرك، جنسك، دينك، هويتك، مو ضرورية. المهم هو تجربتك الإنسانية.</p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="mark">i</div>
+      <div>
+        <h2>مساحة مو علاج</h2>
+        <p>المساحة للتعبير والمشاركة، تساعدك تفهم نفسك أكثر — مو بديل عن علاج نفسي مختص.</p>
+        <div class="disclaimer">
+          <p><strong>تنويه:</strong> كل شيء تكتبه هنا يظهر لأي زائر للموقع (بعد المراجعة، وبدون أي معلومة تكشف هويتك). الرجاء عدم ذكر أي أسماء أو تفاصيل تكشف مكانك أو هويتك أو هوية أي شخص ثاني.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="submit" id="submit">
+    <div class="inner">
+      <h2>شارك تجربتك</h2>
+      <p class="sub">اكتب براحتك. تجربتك ما تنشر مباشرة، تنراجع أول للتأكد ما فيها شي يكشف هويتك.</p>
+      <p class="field-note" style="margin-bottom:24px;">تذكير: لا تذكر أسماء، أماكن محددة، أو أي تفصيل يدل عليك أو على شخص ثاني.</p>
+
+      <div class="gform-wrap">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd8ak5TaAiGjb_itrfVkiOoC6aEVF000xdYGJUf3bpG5g8ETw/viewform?embedded=true" width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0">جاري التحميل...</iframe>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="home-footer">
+  <p>مساحة تترك اثر — صوتك أمانة، ودرسك ممكن يغيّر شي بحياة حد ثاني.</p>
+</footer>
+
+</div><!-- /page-home -->
+
+<div id="page-stories" style="display:none;">
+
+  <header class="page-head">
+    <button type="button" class="back-link" id="back-home">→ رجوع للرئيسية</button>
+    <h1>تجارب الناس</h1>
+    <p>تجارب حقيقية شاركها ناس ما نعرف هويتهم، كل وحدة فيها درس. تصفح حسب النوع أو شوفها كلها.</p>
+  </header>
+
+  <div class="filters" id="filters" role="tablist" aria-label="تصفية حسب نوع التجربة"></div>
+
+  <div class="wrap">
+    <section class="feed">
+      <div id="stories-list">
+        <p class="empty-state">جاري تحميل التجارب...</p>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>مساحة تترك اثر — صوتك أمانة، ودرسك ممكن يغيّر شي بحياة حد ثاني.</p>
+  </footer>
+
+</div><!-- /page-stories -->
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_hKaOTgokJUlzsB2kBK3SRENgzt8fm1H8vVdzrT55ctxl00wyGr-32H2EHTIMbqkaAtwuh_JFBlKj/pub?gid=1065013323&single=true&output=csv";
+
+function showGlobalError(msg){
+  const banner = document.getElementById('global-error-banner');
+  banner.textContent = 'خطأ تقني: ' + msg;
+  banner.style.display = 'block';
+}
+
+let allStories = [];
+let activeFilter = 'الكل';
+let storiesLoaded = false;
+
+function showPage(page){
+  document.getElementById('page-home').style.display = page === 'home' ? '' : 'none';
+  document.getElementById('page-stories').style.display = page === 'stories' ? '' : 'none';
+  window.scrollTo(0, 0);
+  if(page === 'stories' && !storiesLoaded){
+    loadPublishedStories();
+  }
+}
+document.getElementById('nav-home').addEventListener('click', () => showPage('home'));
+document.getElementById('nav-stories').addEventListener('click', () => showPage('stories'));
+document.getElementById('back-home').addEventListener('click', () => showPage('home'));
+
+async function loadPublishedStories(){
+  const listEl = document.getElementById('stories-list');
+  try{
+    const res = await fetch(CSV_URL + '&_=' + Date.now());
+    if(!res.ok) throw new Error('تعذر تحميل الجدول (HTTP ' + res.status + ')');
+    const csvText = await res.text();
+    const parsed = Papa.parse(csvText, {header: true, skipEmptyLines: true});
+    const fields = parsed.meta.fields || [];
+    const findKey = (partial) => fields.find(k => k.trim() === partial) || fields.find(k => k.trim().indexOf(partial) === 0);
+    const kType = findKey('نوع التجربة') || findKey('نوع التجربه');
+    const kExp = findKey('تجربتك');
+    const kLesson = findKey('الدرس الي تعلمته');
+    const kPub = fields.find(k => k.trim().toLowerCase() === 'published');
+
+    const stories = (parsed.data || [])
+      .filter(r => kPub && String(r[kPub] || '').trim().toUpperCase() === 'TRUE')
+      .map(r => ({
+        type: (r[kType] || '').trim(),
+        experience: (r[kExp] || '').trim(),
+        lesson: (r[kLesson] || '').trim()
+      }))
+      .filter(s => s.experience && s.lesson)
+      .reverse();
+
+    allStories = stories;
+    storiesLoaded = true;
+    renderFilters();
+    renderList();
+  }catch(e){
+    listEl.innerHTML = `<p class="empty-state">صار خطأ بتحميل التجارب: ${escapeHtml(e.message || String(e))}</p>`;
+  }
+}
+
+function renderFilters(){
+  const filtersEl = document.getElementById('filters');
+  const types = [...new Set(allStories.map(s => s.type).filter(Boolean))];
+  // The filter bar only appears once real submitted stories carry a type.
+  if(types.length === 0){
+    filtersEl.innerHTML = '';
+    return;
+  }
+  const options = ['الكل', ...types];
+  filtersEl.innerHTML = options.map(t => `
+    <button class="filter-btn ${t === activeFilter ? 'active' : ''}" data-type="${escapeHtml(t)}">${escapeHtml(t)}</button>
+  `).join('');
+}
+
+function renderList(){
+  const listEl = document.getElementById('stories-list');
+  const filtered = activeFilter === 'الكل' ? allStories : allStories.filter(s => s.type === activeFilter);
+  if(filtered.length === 0 && allStories.length === 0){
+    listEl.innerHTML = '<p class="empty-state">ما فيه تجارب منشورة بعد. كن أول من يترك اثر.</p>';
+    return;
+  }
+  if(filtered.length === 0){
+    listEl.innerHTML = `<p class="empty-state">ما فيه تجارب بهذا النوع لسا.</p>`;
+    return;
+  }
+  listEl.innerHTML = filtered.map(renderStoryCard).join('');
+}
+
+document.getElementById('filters').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if(!btn) return;
+  activeFilter = btn.getAttribute('data-type');
+  renderFilters();
+  renderList();
+});
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderStoryCard(story){
+  const typeBadge = story.type ? `<span class="type-badge">${escapeHtml(story.type)}</span>` : '';
+  return `
+    <div class="story-card">
+      ${typeBadge}
+      <span class="story-label">التجربة</span>
+      <p class="story-text">${escapeHtml(story.experience)}</p>
+      <div class="lesson-box">
+        <span class="story-label">الدرس</span>
+        <p>${escapeHtml(story.lesson)}</p>
+      </div>
+    </div>
+  `;
+}
+
+// Scroll reveal for info blocks (progressive enhancement — content is visible by default in CSS,
+// this only adds the fade-in effect, and never hides content if anything here fails)
+try{
+  const blocks = document.querySelectorAll('.info-block');
+  if('IntersectionObserver' in window){
+    blocks.forEach(b => b.classList.add('pre-reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          entry.target.classList.remove('pre-reveal');
+        }
+      });
+    }, {threshold: 0.1});
+    blocks.forEach(b => observer.observe(b));
+  }
+}catch(e){
+  // If anything above fails, .info-block already defaults to fully visible in CSS.
+}
+</script>
+
+</body>
+</html>
